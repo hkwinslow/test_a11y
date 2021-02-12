@@ -1,6 +1,6 @@
 # test_a11y
 
-A new Flutter project.
+An app to test the different accessibility features that Flutter offers.
 
 ## Getting Started
 
