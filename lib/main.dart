@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      //showSemanticsDebugger: true,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -59,6 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _decrementCounter() {
+    setState(() {
+      _counter--;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -76,38 +86,150 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+        child: ListView(padding: const EdgeInsets.all(15),
+            // ListView is also a layout widget. It takes a list of children and
+            // arranges them vertically. It can be used as an alternative to Column because,
+            // unlike a Column, a ListView will not give you overflow and will allow users
+            // to scroll.
+            children: <Widget>[
+              // Add a label to an image
+              Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                child: Image(
+                  image: AssetImage('assets/logo.png'),
+                  semanticLabel: 'Image of a desktop computer.',
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+
+              // Set text as a header
+              Semantics(
+                header: true,
+                child: Text(
+                  'Testing accessibility',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: MediaQuery.of(context).size.width * 0.08,
+                  ),
+                ),
+              ),
+              Text('Here is some text that will appear underneath the header ' +
+                  'just to make the header stand out so the dev knows the header is a header.'),
+              SizedBox(
+                height: 30,
+              ),
+
+              // Text field
+              TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Username',
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+
+              // Add tooltips to icon buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.remove,
+                      size: MediaQuery.of(context).size.width * 0.08,
+                      color: Colors.red,
+                    ),
+                    onPressed: _decrementCounter,
+                    tooltip: 'Decrement',
+                  ),
+                  Text(
+                    _counter.toString(),
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.07),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.add,
+                      size: MediaQuery.of(context).size.width * 0.08,
+                      color: Colors.green,
+                    ),
+                    onPressed: _incrementCounter,
+                    tooltip: 'Increment',
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+
+              // Sort semantically in a different order
+              // TIP: don't wrap these in another column. Leave them how they are.
+              // They are already in a column (technically a ListView -- see above).
+              // Semantics do not function properly if they are in nested columns
+              Semantics(
+                sortKey: OrdinalSortKey(2.0),
+                child: Text(
+                  'Alpha',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  ),
+                ),
+              ),
+              Semantics(
+                sortKey: OrdinalSortKey(0.0),
+                child: Text(
+                  'Bravo',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  ),
+                ),
+              ),
+              Semantics(
+                sortKey: OrdinalSortKey(1.0),
+                child: Text(
+                  'Charlie',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                  ),
+                ),
+              ),
+
+              SizedBox(
+                height: 30,
+              ),
+
+              // Assign a type and state to a custom widget
+              Semantics(
+                button: true, // screen reader will recognize element as button
+                enabled: false, // screen reader will announce "dimmed" since element is not enabled
+                child: Material(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12.0),
+                  ),
+                  color: Colors.blue,
+                  child: InkWell(
+                    onTap: () {}, //not implemented due to test-only nature of project
+                    child: Container(
+                      child: Center(
+                        child: Text('Custom element'),
+                      ),
+                      padding: EdgeInsets.all(0.0),
+                      height: MediaQuery.of(context).size.height * .07,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(12.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ]),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
